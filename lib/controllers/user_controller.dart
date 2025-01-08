@@ -1,9 +1,10 @@
+import 'package:dart_frog/dart_frog.dart';
 import 'package:simple_backend/models/user/user.dart';
 
 abstract interface class UserController {
-  Future<List<User>> getUsers();
-  Future<void> addUser(User user);
-  Future<User> getUser(String id);
-  Future<void> updateUser(User user);
-  Future<void> deleteUser(String id);
+  Future<Response> getUsers();
+  Future<Response> addUser(User user);
+  Future<Response> getUser(String id);
+  Future<Response> updateUser(User user);
+  Future<Response> deleteUser(String id);
 }
