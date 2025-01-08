@@ -1,4 +1,5 @@
 import 'package:postgres/postgres.dart';
+import 'package:simple_backend/config/database_config.dart';
 
 final class DatabaseProvider {
   static final DatabaseProvider _instance = DatabaseProvider._internal();
@@ -20,10 +21,10 @@ final class DatabaseProvider {
   Future<Connection> _openConnection() {
     return Connection.open(
       Endpoint(
-        host: 'localhost',
-        database: 'dart-test',
-        username: 'postgres',
-        password: 'postgres',
+        host: DatabaseConfig.host,
+        database: DatabaseConfig.database,
+        username: DatabaseConfig.username,
+        password: DatabaseConfig.password,
       ),
       settings: const ConnectionSettings(sslMode: SslMode.disable),
     );

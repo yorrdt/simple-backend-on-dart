@@ -1,8 +1,7 @@
 import 'dart:io';
-
 import 'package:dart_frog/dart_frog.dart';
-import 'package:simple_backend/domain/models/user/user.dart';
-import 'package:simple_backend/domain/repository/user_repository.dart';
+import 'package:simple_backend/models/user/user.dart';
+import 'package:simple_backend/services/user_service.dart';
 
 Future<Response> onRequest(RequestContext context) async {
   final request = context.request;
@@ -26,15 +25,15 @@ Future<Response> _onPost(RequestContext context) async {
 
   final user = User(name: username, password: password);
 
-  final userRepository = context.read<UserRepository>();
+  final userRepository = context.read<UserService>();
   await userRepository.addUser(user);
 
   return Response.json(body: {'message': 'create user'});
 }
 
 Future<Response> _onGet(RequestContext context) async {
-  final userRepository = context.read<UserRepository>();
+  final userRepository = context.read<UserService>();
   final users = await userRepository.getUsers();
 
-  return Response.json(body: {'message': users});
+  return Response.json(body: users);
 }
