@@ -10,8 +10,8 @@ final class UserServiceImpl implements UserService {
   }) : _userRepository = userRepository;
 
   @override
-  Future<void> addUser(User user) async {
-    await _userRepository.addUser(user);
+  Future<int> addUser(User user) {
+    return _userRepository.addUser(user);
   }
 
   @override

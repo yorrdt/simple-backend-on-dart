@@ -26,12 +26,18 @@ final class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<void> addUser(User user) async {
-    final db = await _databaseProvider.connection;
-    await db.execute(
-      r'INSERT INTO users(name, password) VALUES ($1, $2)',
-      parameters: [user.name, user.password],
-    );
+  Future<int> addUser(User user) async {
+    try {
+      final db = await _databaseProvider.connection;
+      final result = await db.execute(
+        r'INSERT INTO users(name, password) VALUES ($1, $2)',
+        parameters: [user.name, user.password],
+      );
+
+      return result.affectedRows;
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 
   @override

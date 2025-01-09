@@ -12,9 +12,30 @@ final class UserControllerImpl implements UserController {
   }) : _userService = userService;
 
   @override
-  Future<Response> addUser(User user) async {
+  Future<Response> addUser(RequestContext context) async {
     try {
-      await _userService.addUser(user);
+      final body = await context.request.json() as Map<String, dynamic>;
+
+      if (!body.containsKey('username') || !body.containsKey('password')) {
+        return Response.json(
+          statusCode: HttpStatus.badRequest,
+          body: {'error': 'Missing required fields: username or password'},
+        );
+      }
+
+      final username = body['username'] as String;
+      final password = body['password'] as String;
+
+      final user = User(name: username, password: password);
+
+      final affectedRows = await _userService.addUser(user);
+      if (affectedRows == 0) {
+        return Response.json(
+          statusCode: HttpStatus.internalServerError,
+          body: 'Failed to add user to the database',
+        );
+      }
+
       return Response.json(
         statusCode: HttpStatus.created,
         body: {'message': 'User added successfully'},
@@ -28,19 +49,19 @@ final class UserControllerImpl implements UserController {
   }
 
   @override
-  Future<Response> deleteUser(String id) {
+  Future<Response> deleteUser(RequestContext context, String id) {
     // TODO: implement deleteUser
     throw UnimplementedError();
   }
 
   @override
-  Future<Response> getUser(String id) {
+  Future<Response> getUser(RequestContext context, String id) {
     // TODO: implement getUser
     throw UnimplementedError();
   }
 
   @override
-  Future<Response> getUsers() async {
+  Future<Response> getUsers(RequestContext context) async {
     try {
       final usersList = await _userService.getUsers();
       return Response.json(body: usersList);
@@ -53,7 +74,7 @@ final class UserControllerImpl implements UserController {
   }
 
   @override
-  Future<Response> updateUser(User user) {
+  Future<Response> updateUser(RequestContext context, User user) {
     // TODO: implement updateUser
     throw UnimplementedError();
   }
