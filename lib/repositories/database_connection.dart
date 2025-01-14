@@ -1,17 +1,10 @@
 import 'package:postgres/postgres.dart';
 import 'package:simple_backend/config/database_config.dart';
 
-final class DatabaseProvider {
-  static final DatabaseProvider _instance = DatabaseProvider._internal();
-  static Connection? _connection;
+final class DatabaseConnection {
+  Connection? _connection;
 
-  DatabaseProvider._internal();
-
-  factory DatabaseProvider() {
-    return _instance;
-  }
-
-  Future<Connection> get connection async {
+  Future<Connection> open() async {
     if (_connection != null) return _connection!;
 
     _connection = await _openConnection();
@@ -22,6 +15,7 @@ final class DatabaseProvider {
     return Connection.open(
       Endpoint(
         host: DatabaseConfig.host,
+        port: DatabaseConfig.port,
         database: DatabaseConfig.database,
         username: DatabaseConfig.username,
         password: DatabaseConfig.password,
@@ -29,4 +23,6 @@ final class DatabaseProvider {
       settings: const ConnectionSettings(sslMode: SslMode.disable),
     );
   }
+
+  Future<void> close() => _connection!.close();
 }

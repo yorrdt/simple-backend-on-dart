@@ -1,7 +1,7 @@
 import 'package:dart_frog/dart_frog.dart';
 import 'package:simple_backend/controllers/impl/user_controller_impl.dart';
 import 'package:simple_backend/controllers/user_controller.dart';
-import 'package:simple_backend/database_provider.dart';
+import 'package:simple_backend/repositories/database_connection.dart';
 import 'package:simple_backend/repositories/impl/user_repository_impl.dart';
 import 'package:simple_backend/repositories/user_repository.dart';
 import 'package:simple_backend/services/impl/user_service_impl.dart';
@@ -12,17 +12,17 @@ Handler middleware(Handler handler) {
       .use(userControllerProvider())
       .use(userServiceProvider())
       .use(userRepositoryProvider())
-      .use(databaseProvider());
+      .use(databaseConnectionProvider());
 }
 
-Middleware databaseProvider() {
-  return provider<DatabaseProvider>((context) => DatabaseProvider());
+Middleware databaseConnectionProvider() {
+  return provider<DatabaseConnection>((context) => DatabaseConnection());
 }
 
 Middleware userRepositoryProvider() {
   return provider<UserRepository>(
     (context) => UserRepositoryImpl(
-      databaseProvider: context.read<DatabaseProvider>(),
+      databaseConnection: context.read<DatabaseConnection>(),
     )..initialize(),
   );
 }
