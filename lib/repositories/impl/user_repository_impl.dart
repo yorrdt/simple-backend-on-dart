@@ -25,9 +25,8 @@ final class UserRepositoryImpl implements UserRepository {
         ')',
       );
     } catch (e) {
-      throw Exception(e);
-    } finally {
       await db.close();
+      throw Exception(e);
     }
   }
 
@@ -44,9 +43,8 @@ final class UserRepositoryImpl implements UserRepository {
 
       return result.affectedRows;
     } catch (e) {
-      throw Exception(e);
-    } finally {
       await db.close();
+      throw Exception(e);
     }
   }
 
@@ -62,9 +60,8 @@ final class UserRepositoryImpl implements UserRepository {
 
       return result.affectedRows;
     } catch (e) {
-      throw Exception(e);
-    } finally {
       await db.close();
+      throw Exception(e);
     }
   }
 
@@ -78,13 +75,12 @@ final class UserRepositoryImpl implements UserRepository {
         parameters: [id],
       );
 
-      print(result);
+      if (result.isEmpty) return null;
 
       return User.fromJson(result.first.toColumnMap());
     } catch (e) {
-      throw Exception(e);
-    } finally {
       await db.close();
+      throw Exception(e);
     }
   }
 
@@ -98,9 +94,8 @@ final class UserRepositoryImpl implements UserRepository {
 
       return result.map((row) => User.fromJson(row.toColumnMap())).toList();
     } catch (e) {
-      throw Exception(e);
-    } finally {
       await db.close();
+      throw Exception(e);
     }
   }
 
@@ -110,16 +105,15 @@ final class UserRepositoryImpl implements UserRepository {
     try {
       final result = await db.execute(
         'UPDATE ${UserDatabaseConstants.databaseName} '
-        r'name = \$1, password = \$2 '
+        r'SET name = $1, password = $2 '
         'WHERE ${UserDatabaseConstants.id} = \$3',
         parameters: [user.name, user.password, user.id],
       );
 
       return result.affectedRows;
     } catch (e) {
-      throw Exception(e);
-    } finally {
       await db.close();
+      throw Exception(e);
     }
   }
 }

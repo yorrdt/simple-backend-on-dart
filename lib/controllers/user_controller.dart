@@ -1,5 +1,4 @@
 import 'package:dart_frog/dart_frog.dart';
-import 'package:simple_backend/models/user/user.dart';
 
 abstract interface class UserController {
   Future<Response> getUsers(RequestContext context);

@@ -63,15 +63,29 @@ final class UserControllerImpl implements UserController {
     } catch (e) {
       return Response(
         statusCode: HttpStatus.internalServerError,
-        body: 'Error adding user, details: $e',
+        body: 'Error deleting user, details: $e',
       );
     }
   }
 
   @override
-  Future<Response> getUser(RequestContext context, String id) {
-    // TODO: implement getUser
-    throw UnimplementedError();
+  Future<Response> getUser(RequestContext context, String id) async {
+    try {
+      final user = await _userService.getUser(id);
+      if (user == null) {
+        return Response.json(
+          statusCode: HttpStatus.notFound,
+          body: 'User not deleted',
+        );
+      }
+
+      return Response.json(body: user);
+    } catch (e) {
+      return Response(
+        statusCode: HttpStatus.internalServerError,
+        body: 'Error getting user, details: $e',
+      );
+    }
   }
 
   @override
@@ -82,14 +96,48 @@ final class UserControllerImpl implements UserController {
     } catch (e) {
       return Response(
         statusCode: HttpStatus.internalServerError,
-        body: 'Error fetching users, details: $e',
+        body: 'Error getting users, details: $e',
       );
     }
   }
 
   @override
-  Future<Response> updateUser(RequestContext context, String id) {
-    // TODO: implement updateUser
-    throw UnimplementedError();
+  Future<Response> updateUser(RequestContext context, String id) async {
+    try {
+      final existingUser = await _userService.getUser(id);
+      if (existingUser == null) {
+        return Response.json(
+          statusCode: HttpStatus.notFound,
+          body: 'User not found',
+        );
+      }
+
+      final body = await context.request.json() as Map<String, dynamic>;
+
+      if (!body.containsKey('id') ||
+          !body.containsKey('name') ||
+          !body.containsKey('password')) {
+        return Response.json(
+          statusCode: HttpStatus.badRequest,
+          body: {'error': 'Missing required fields: id, name or password'},
+        );
+      }
+
+      final user = User.fromJson(body);
+      final affectedRows = await _userService.updateUser(user);
+      if (affectedRows == 0) {
+        return Response.json(
+          statusCode: HttpStatus.notFound,
+          body: 'User not updated',
+        );
+      }
+
+      return Response.json(body: 'User with id $id successfully updated!');
+    } catch (e) {
+      return Response(
+        statusCode: HttpStatus.internalServerError,
+        body: 'Error getting user, details: $e',
+      );
+    }
   }
 }
