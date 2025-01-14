@@ -49,9 +49,23 @@ final class UserControllerImpl implements UserController {
   }
 
   @override
-  Future<Response> deleteUser(RequestContext context, String id) {
-    // TODO: implement deleteUser
-    throw UnimplementedError();
+  Future<Response> deleteUser(RequestContext context, String id) async {
+    try {
+      final affectedRows = await _userService.deleteUser(id);
+      if (affectedRows == 0) {
+        return Response.json(
+          statusCode: HttpStatus.notFound,
+          body: 'User not found',
+        );
+      }
+
+      return Response.json(body: 'User with id $id was successfully deleted!');
+    } catch (e) {
+      return Response(
+        statusCode: HttpStatus.internalServerError,
+        body: 'Error adding user, details: $e',
+      );
+    }
   }
 
   @override
@@ -74,7 +88,7 @@ final class UserControllerImpl implements UserController {
   }
 
   @override
-  Future<Response> updateUser(RequestContext context, User user) {
+  Future<Response> updateUser(RequestContext context, String id) {
     // TODO: implement updateUser
     throw UnimplementedError();
   }

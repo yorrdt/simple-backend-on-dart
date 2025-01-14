@@ -1,17 +1,16 @@
 import 'dart:io';
 
 import 'package:dart_frog/dart_frog.dart';
+import 'package:simple_backend/controllers/user_controller.dart';
 
-Future<Response> onRequest(RequestContext context, String id) async {
+Future<Response> onRequest(RequestContext context, String id) {
   final request = context.request;
   return switch (request.method) {
-    HttpMethod.get => _onGet(context),
+    HttpMethod.get => context.read<UserController>().getUser(context, id),
+    HttpMethod.delete => context.read<UserController>().deleteUser(context, id),
+    HttpMethod.put => context.read<UserController>().updateUser(context, id),
     _ => Future.value(
         Response(statusCode: HttpStatus.methodNotAllowed),
       ),
   };
-}
-
-Future<Response> _onGet(RequestContext context) async {
-  return Response.json(body: 'get user by id');
 }

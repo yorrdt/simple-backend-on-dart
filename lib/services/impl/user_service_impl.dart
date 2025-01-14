@@ -15,12 +15,12 @@ final class UserServiceImpl implements UserService {
   }
 
   @override
-  Future<void> deleteUser(String id) async {
-    await _userRepository.deleteUser(id);
+  Future<int> deleteUser(String id) {
+    return _userRepository.deleteUser(id);
   }
 
   @override
-  Future<User> getUser(String id) {
+  Future<User?> getUser(String id) {
     return _userRepository.getUser(id);
   }
 
@@ -30,7 +30,7 @@ final class UserServiceImpl implements UserService {
   }
 
   @override
-  Future<void> updateUser(User user) async {
-    await _userRepository.updateUser(user);
+  Future<int> updateUser(User user) {
+    return _userRepository.updateUser(user);
   }
 }

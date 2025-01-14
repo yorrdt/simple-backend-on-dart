@@ -51,14 +51,16 @@ final class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<void> deleteUser(String id) async {
+  Future<int> deleteUser(String id) async {
     final db = await _databaseConnection.open();
     try {
-      await db.execute(
+      final result = await db.execute(
         'DELETE FROM ${UserDatabaseConstants.databaseName} '
         'WHERE ${UserDatabaseConstants.id} = \$1',
         parameters: [id],
       );
+
+      return result.affectedRows;
     } catch (e) {
       throw Exception(e);
     } finally {
@@ -67,7 +69,7 @@ final class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<User> getUser(String id) async {
+  Future<User?> getUser(String id) async {
     final db = await _databaseConnection.open();
     try {
       final result = await db.execute(
@@ -75,6 +77,9 @@ final class UserRepositoryImpl implements UserRepository {
         'WHERE ${UserDatabaseConstants.id} = \$1',
         parameters: [id],
       );
+
+      print(result);
+
       return User.fromJson(result.first.toColumnMap());
     } catch (e) {
       throw Exception(e);
@@ -100,15 +105,17 @@ final class UserRepositoryImpl implements UserRepository {
   }
 
   @override
-  Future<void> updateUser(User user) async {
+  Future<int> updateUser(User user) async {
     final db = await _databaseConnection.open();
     try {
-      await db.execute(
+      final result = await db.execute(
         'UPDATE ${UserDatabaseConstants.databaseName} '
         r'name = \$1, password = \$2 '
         'WHERE ${UserDatabaseConstants.id} = \$3',
         parameters: [user.name, user.password, user.id],
       );
+
+      return result.affectedRows;
     } catch (e) {
       throw Exception(e);
     } finally {
